@@ -133,6 +133,7 @@ fun HomeView(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
+
             val wishlist = viewModel.getAllWishes.collectAsState(initial = listOf())
             LazyColumn(modifier = Modifier
                 .fillMaxSize()

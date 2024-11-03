@@ -20,9 +20,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     version = 1,
     //room will not export the schema - to Jdson file - used in some git shit we do not caree
       exportSchema = true,
-//    autoMigrations = [
-//        AutoMigration(from = 2, to = 3)
-//    ]
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2)
+    ]
 )
 
 //room db for wishlist appn

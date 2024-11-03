@@ -35,7 +35,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,8 +56,7 @@ fun SettingsView(
     wishViewModel: WishViewModel,   // WishViewModel for wishlist-related logic
     //authViewModel: AuthViewModel,   // AuthViewModel for user authentication
     navController: NavController,
-    //selectedImageUri : String?,
-    username : String
+    //selectedImageUri : String?
 ) {
     //username : String?
     //val emailState by authViewModel.emailState.collectAsState() // MAKE SURE `emailState` IS AVAILABLE IN `AuthViewModel`, IF NOT, ADD IT
@@ -138,7 +136,7 @@ fun SettingsView(
                     .clip(CircleShape)
             )
             Text(
-                text = username,
+                text = "username",
                 fontWeight = FontWeight.Bold,
                 fontSize = 26.sp,
                 modifier = Modifier.padding(top = 12.dp, bottom = 3.dp)
@@ -358,8 +356,8 @@ fun SettingsView(
 @Composable
 fun ProfileView(onDismiss: () -> Unit, navController: NavController, viewModel: WishViewModel) {
     // State to manage the selected image URI
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-    var userNameState by remember { mutableStateOf("") }
+    val selectedImageUri = remember { mutableStateOf<Uri?>(null) }
+    val userNameState = remember { mutableStateOf("") }
 
     // Context for permission requests and handling intents
     val context = LocalContext.current
@@ -371,25 +369,16 @@ fun ProfileView(onDismiss: () -> Unit, navController: NavController, viewModel: 
         if (result.resultCode == RESULT_OK) {
             // Get the image Uri from the result data
             val uri = result.data?.data
-            selectedImageUri = uri
+            selectedImageUri.value = uri
         }
     }
 
-    /*
-    gallery launcher -
-    rememberlauncher - to remember the result and use it to start another activity
-    contract - telling the app that the result will be used for something else
-    handling activity result if it is successful
-    uri = result.data?.data - returns the sata returned from the gallery (uri of the selected image)
-    result.data - returned intent obj
-    result.data?.data - access the specific data within the intent(uri)
-     */
 
     // Function to open the gallery
     fun openGallery(context: Context, galleryLauncher: ActivityResultLauncher<Intent>) {
         val pickIntent = Intent(
-            Intent.ACTION_PICK,     //picks some data
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI        //points to the locn where img are stored on the device
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         )
         galleryLauncher.launch(pickIntent)
     }
@@ -430,10 +419,10 @@ fun ProfileView(onDismiss: () -> Unit, navController: NavController, viewModel: 
                     Text(text = "Hello, Name!")
 
                     // Display the selected image or a placeholder image
-                    if (selectedImageUri != null) {
+                    if (selectedImageUri.value != null) {
                         Image(
                             painter = rememberImagePainter(
-                                data = selectedImageUri
+                                data = selectedImageUri.value
                             ),
                             contentDescription = "Profile Image",
                             modifier = Modifier
@@ -450,7 +439,7 @@ fun ProfileView(onDismiss: () -> Unit, navController: NavController, viewModel: 
                     } else {
                         Image(
                             painter = painterResource(id = R.drawable.icon2),
-                               contentDescription = "hellokitty",
+                            contentDescription = "hellokitty",
                             modifier = Modifier
                                 .size(100.dp)
                                 .clickable {
@@ -466,14 +455,21 @@ fun ProfileView(onDismiss: () -> Unit, navController: NavController, viewModel: 
 
                     // Username input field
                     TextField(
-                        value = userNameState,
-                        onValueChange = { userNameState = it }
+                        value = userNameState.value,
+                        onValueChange = { userNameState.value = it }
                     )
 
                     // Confirmation button
                     Button(
                         onClick = {
-                            navController.navigate(Screen.SettingsScreen.route +"/$userNameState")
+                            //navController.navigate(Screen.SettingsScreen.route + "/${userNameState.value}")
+                            //Log.d("Navigation", "Navigating to: ${Screen.SettingsScreen.route}/${userNameState.value}")
+                            /*val uri = selectedImageUri.value
+                            uri.let {
+                                val encodedUri = Uri.encode(it.toString())
+                                navController.navigate("${Screen.SettingsScreen.route}/$encodedUri")
+                            }*/
+                            navController.navigate(Screen.SettingsScreen.route)
                         }, colors = ButtonDefaults.buttonColors(Color.Black),
                         modifier = Modifier.padding(16.dp)
                     ) {

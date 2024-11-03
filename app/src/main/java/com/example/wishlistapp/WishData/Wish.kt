@@ -15,7 +15,10 @@ data class Wish(
     @ColumnInfo(name = "wish-tag")
     val tag: String="",
     @ColumnInfo(name = "is-fav", defaultValue = "fav")
-    val isFav : String =""
+    val isFav : String ="",
+    @ColumnInfo(name = "wish-tag", defaultValue = "")
+    val tags : List<String>
+
 )
 
 /*object Dummywish{
