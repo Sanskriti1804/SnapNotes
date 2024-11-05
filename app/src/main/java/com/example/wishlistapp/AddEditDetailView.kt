@@ -1,20 +1,34 @@
 package com.example.wishlistapp
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -54,13 +68,17 @@ fun AddEditDetailView(
     //state of scaffold for managing the snackbar and other components
     val scaffoldState = rememberScaffoldState()
 
+    val newTag = remember{
+        mutableStateOf("")
+    }
+
     //if id is not 0L the existing wish is fetched and VM is updated w title and desc
     if(id != 0L){
         //getAWishById - g=fetches wish of given id and returns a flow that emits the wish data
         //collectasState - collects the emmited data anfd onverts it to a state obj
         // initial value is set to empty string then it is being updated to the string to display on ui
         val wish = viewModel.getAWishById(id).collectAsState(
-            initial = Wish(0L, "", "", ""))
+            initial = Wish(0L, "", "", emptyList()))
         //updates the vm w existing wish data
         viewModel.wishTitleState = wish.value.title
         viewModel.wishDescriptionState = wish.value.description
@@ -69,7 +87,7 @@ fun AddEditDetailView(
     else{
         viewModel.wishTitleState = ""
         viewModel.wishDescriptionState = ""
-        viewModel.wishTagState = ""
+        viewModel.wishTagState = emptyList()
     }
 
     // to manage the top app bar and the snackbar
@@ -114,12 +132,23 @@ fun AddEditDetailView(
                     viewModel.onWishDescriptionState(it)
                 })
             Spacer(modifier = Modifier.height(10.dp))
-            WishTextField(
-                label = "Tag" ,
-                value = viewModel.wishTagState,
-                onValueChanged = {
-                    viewModel.onWishTagState(it)
-                })
+//            WishTextField(
+//                label = "Tag" ,
+//                value = viewModel.wishTagState.joinToString(","),
+//                onValueChanged = {
+//                    viewModel.onWishTagState(it)
+//                })
+            TagInput(
+                tags = viewModel.wishTagState,
+                onAddTag = { tag ->
+                    viewModel.wishTagState = viewModel.wishTagState + tag // Add new tag
+                },
+                onRemoveTag = { tag ->
+                    viewModel.wishTagState = viewModel.wishTagState.filter { it != tag } // Remove tag
+                },
+                newTag = newTag.value,
+                onNewTagChanged = { newTag.value = it } // Update new tag input
+            )
             Spacer(modifier = Modifier.height(10.dp))
             Button(onClick = {
                 if(viewModel.wishTitleState.isNotEmpty() &&
@@ -132,7 +161,7 @@ fun AddEditDetailView(
                                 id = id,
                                 title = viewModel.wishTitleState.trim(),
                                 description = viewModel.wishDescriptionState.trim(),
-                                tag = viewModel.wishTagState.trim()
+                                tag = viewModel.wishTagState
                             )
                         )
 
@@ -146,7 +175,7 @@ fun AddEditDetailView(
                                 //trim() - removing whitespace from beginning and end
                                 title = viewModel.wishTitleState.trim(),
                                 description = viewModel.wishDescriptionState.trim(),
-                                tag = viewModel.wishTagState.trim()
+                                tag = viewModel.wishTagState
                             )
                         )
                         snackMessage.value = "Wish has been created"
@@ -175,6 +204,7 @@ fun AddEditDetailView(
                     style = TextStyle(fontSize = 18.sp),
                     color = Color.White
                 )
+
             }
         }
 
@@ -226,5 +256,124 @@ fun WistPrev() {
         viewModel = dummyViewModel,
         navController = navController
     )
-
 }
+
+@Composable
+fun TagInput(
+    tags : List<String>,
+    onAddTag : (String) -> Unit,
+    onRemoveTag : (String) -> Unit,
+    newTag : String,
+    onNewTagChanged : (String) -> Unit
+){
+    //displaying existing tags
+    Column {
+        LazyRow (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+//            horizontalArrangement = Arrangement.Start
+        ){
+            items(tags) {
+                tag ->
+                TagItem(
+                    tag = tag,
+                    onRemoveTag = { onRemoveTag(tag)
+                    }
+                )
+            }
+        }
+
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            OutlinedTextField(
+                value = newTag,
+                onValueChange = onNewTagChanged,
+                label = { Text(text = "Tag", color = Color.Black)},
+                modifier = Modifier.weight(2f),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    unfocusedBorderColor = Color.Black,
+                    focusedBorderColor = Color.Black,
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.Black
+                )
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Button(onClick = {
+                if (newTag.isNotEmpty()) {
+                    onAddTag(newTag)
+                    onNewTagChanged("")
+                }
+            },
+                shape = RoundedCornerShape(4.dp),
+                modifier = Modifier
+                    .height(56.dp)
+                    .width(56.dp)
+                    .padding(top = 4.dp),
+                colors = ButtonDefaults.buttonColors(Color.Black)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add tag",
+                    tint = Color.White,
+                    modifier = Modifier.size(50.dp))
+            }
+        }
+        }
+}
+
+@Composable
+fun TagItem( tag : String, onRemoveTag: () -> Unit){
+    Box (
+        modifier = Modifier
+            .padding(3.dp)
+            .border(1.dp, Color.Black, RoundedCornerShape(4.dp))
+            .padding(horizontal = 8.dp, vertical = 5.dp),
+//        verticalAlignment = Alignment.CenterVertically
+    ){
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(end = 4.dp)
+        ){
+            Text(
+                text = "#$tag",
+                fontSize = 12.sp,
+                modifier = Modifier
+//                    .weight(1f)
+                    .padding(end = 4.dp)
+                    .align(Alignment.CenterVertically)
+            )
+//            Button(onClick = {
+//
+//            },
+//                modifier = Modifier
+//                    ,
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = Color.Transparent,
+//                    contentColor = Color.Black
+//                )) {
+                Icon(
+                    imageVector = Icons.Outlined.Close,
+                    contentDescription = "Remove tag",
+                    tint = Color.Black,
+                    modifier = Modifier
+                        //.size(30.dp)
+                        .height(16.dp)
+                        .width(16.dp)
+                        .align(Alignment.CenterVertically)
+                        .clickable {
+                            onRemoveTag()
+                        }
+                )
+
+            }
+        }
+    }
+
+
+
+

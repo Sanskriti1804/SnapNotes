@@ -61,6 +61,8 @@ fun AppBarView(
         }
     }
 
+
+
     // Define the top app bar
     TopAppBar(
         // Title as a composable function

@@ -36,18 +36,23 @@ fun Navigation(viewModel: WishViewModel = viewModel(),
         }
 
         //composable(Screen.SettingsScreen.route + "/{emailState}"){backStackEntry ->
-        composable(Screen.SettingsScreen.route
-            //arguments = listOf(navArgument("imageUri"){type = NavType.StringType})
+        composable(Screen.SettingsScreen.route + "/{userNameState}" ,
+            arguments = listOf(
+                navArgument("userNameState"){
+                    type = NavType.StringType
+                }
+            )
         ){
             backStackEntry ->
             //val imageUri = backStackEntry.arguments?.getString("imageUri")
             //val email = backStackEntry.arguments?.getString("emailState")
-            //val username = backStackEntry.arguments?.getString("userNameState")
+            val username = backStackEntry.arguments?.getString("userNameState") ?: ""
             //val decodedEmail = URLDecoder.decode(email, "UTF-8")
             //SettingsView(viewModel = viewModel,navController = navController, emailState = decodedEmail ?: "")
             val wishViewModel: WishViewModel = viewModel() // Obtain WishViewModel
             val authViewModel: AuthViewModel = viewModel()
             SettingsView( wishViewModel = wishViewModel,
+                username = username,
                 //authViewModel = authViewModel,
                 navController = navController)
             //SettingsView( wishViewModel = wishViewModel,authViewModel = authViewModel, navController = navController, username = username ?: "Default")
@@ -77,9 +82,7 @@ fun Navigation(viewModel: WishViewModel = viewModel(),
             AddEditDetailView(id = id, viewModel = viewModel, navController = navController)
         }
 
-        composable(Screen.ScreenFav.route){
-            ScreenFav(viewModel = viewModel,navController = navController)
-        }
+
     }
 
 }

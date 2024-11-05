@@ -6,6 +6,7 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
@@ -17,7 +18,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     //it means the room will treat the "wish" class as a tabke in the db
     entities = [Wish :: class],
     //version of db - when making a change to the schema (adding new table, column, etc) version no is incremented
-    version = 1,
+    version = 2,
     //room will not export the schema - to Jdson file - used in some git shit we do not caree
       exportSchema = true,
     autoMigrations = [
@@ -26,6 +27,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 )
 
 //room db for wishlist appn
+@TypeConverters(Converters::class)  // Register the TypeConverters
 abstract class wishDataBase : RoomDatabase() {
     //it provides necessary methods to interact with wish entity
     abstract fun wishDao() : WishDao

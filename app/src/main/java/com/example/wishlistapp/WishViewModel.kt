@@ -10,6 +10,10 @@ import com.example.wishlistapp.WishData.WishRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 //to manage ui related data and perform crud operations on the wish data using wishrepo
@@ -18,13 +22,19 @@ class WishViewModel(
     //type - WishRepo
     //initialization- Graph.wishRepo
     //inheritance - vM()
-    private val wishRepository: WishRepository = Graph.wishRepository) : ViewModel(){
-
+    private val wishRepository: WishRepository = Graph.wishRepository) : ViewModel()
+{
     //by - to delegate the getter and setter of a prop to another object
     var wishTitleState by mutableStateOf("")
     var wishDescriptionState by mutableStateOf("")
-    var wishTagState by mutableStateOf("")
+    var wishTagState by mutableStateOf(listOf<String>())
 
+    var searchQuery by mutableStateOf("")
+    private val _filteredWishes = MutableStateFlow<List<Wish>>(emptyList())
+    val filteredWishes : StateFlow<List<Wish>> = _filteredWishes.asStateFlow()
+
+    private val _wishes = MutableStateFlow<List<Wish>>(emptyList())
+    val wishes: StateFlow<List<Wish>> = _wishes.asStateFlow()
 
     //newString - new or update string value
     fun onWishTitleChanged(newString: String){
@@ -35,8 +45,14 @@ class WishViewModel(
         wishDescriptionState = newString
     }
 
-    fun onWishTagState(newString: String){
-        wishTagState = newString
+    fun onWishTagState(newTag: String){
+        if (newTag.isNotEmpty() && !wishTagState.contains(newTag)){
+            wishTagState = wishTagState + newTag
+        }
+    }
+
+    fun removeTag(tagToRemove : String){
+        wishTagState = wishTagState.filter { it != tagToRemove }
     }
 
     //var getAllWishes: Flow<List<Wish>> = wishRepository.getWishes() SAME THINGG but the below approach is better fora synchronouus operations and dont want to block the main UI thread
@@ -50,10 +66,15 @@ class WishViewModel(
     init {
         viewModelScope.launch {
             getAllWishes = wishRepository.getWishes()
+            getAllWishes.collect{ wishes ->
+                _wishes.value = wishes
+                filterWishes()
+            }
         }
+
     }
 
-    var favWishes : Flow<List<Wish>> = MutableStateFlow(emptyList())
+//    var favWishes : Flow<List<Wish>> = MutableStateFlow(emptyList())
 
 //    init {
 //        viewModelScope.launch {
@@ -81,6 +102,24 @@ class WishViewModel(
     fun deleteWish(wish : Wish){
         viewModelScope.launch ( Dispatchers.IO ){
             wishRepository.deleteAWish(wish = wish)
+        }
+    }
+
+    // Function to update the search query
+    fun updateSearchQuery(query: String) {
+        searchQuery = query
+        filterWishes()
+    }
+
+    // Function to filter wishes based on the search query
+    private fun filterWishes() {
+        if (searchQuery.isEmpty()) {
+            _filteredWishes.value = _wishes.value
+        } else {
+            _filteredWishes.value = _wishes.value.filter { wish ->
+                wish.title.contains(searchQuery, ignoreCase = true) ||
+                        wish.description.contains(searchQuery, ignoreCase = true)
+            }
         }
     }
 
