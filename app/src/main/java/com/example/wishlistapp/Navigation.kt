@@ -36,25 +36,27 @@ fun Navigation(viewModel: WishViewModel = viewModel(),
         }
 
         //composable(Screen.SettingsScreen.route + "/{emailState}"){backStackEntry ->
-        composable(Screen.SettingsScreen.route + "/{userNameState}" ,
-            arguments = listOf(
-                navArgument("userNameState"){
-                    type = NavType.StringType
-                }
-            )
+        composable(Screen.SettingsScreen.route
+//                + "/{userNameState}" ,
+//            arguments = listOf(
+//                navArgument("userNameState"
+//                ){
+//                    type = NavType.StringType
+//                }
+//            )
         ){
-            backStackEntry ->
+//            backStackEntry ->
             //val imageUri = backStackEntry.arguments?.getString("imageUri")
             //val email = backStackEntry.arguments?.getString("emailState")
-            val username = backStackEntry.arguments?.getString("userNameState") ?: ""
-            //val decodedEmail = URLDecoder.decode(email, "UTF-8")
+//            val username = backStackEntry.arguments?.getString("userNameState") ?: ""
+//            //val decodedEmail = URLDecoder.decode(email, "UTF-8")
             //SettingsView(viewModel = viewModel,navController = navController, emailState = decodedEmail ?: "")
             val wishViewModel: WishViewModel = viewModel() // Obtain WishViewModel
             val authViewModel: AuthViewModel = viewModel()
-            SettingsView( wishViewModel = wishViewModel,
-                username = username,
+            SettingsView( wishViewModel = wishViewModel,navController = navController)
+//                username = username,
                 //authViewModel = authViewModel,
-                navController = navController)
+
             //SettingsView( wishViewModel = wishViewModel,authViewModel = authViewModel, navController = navController, username = username ?: "Default")
         }
         // initialiation in composable fnn(used in NavHost to define individual screen) - it takes a route and a lambda fnn
@@ -80,6 +82,12 @@ fun Navigation(viewModel: WishViewModel = viewModel(),
             val id = if(entry.arguments != null) entry.arguments!!.getLong("id") else 0L
             //passing that id to addeditdeatilView
             AddEditDetailView(id = id, viewModel = viewModel, navController = navController)
+        }
+        composable(Screen.InfoPrevScreen.route){
+            AppInfoPrev(viewModel = viewModel,navController = navController)
+        }
+        composable(Screen.InfoScreen.route){
+            AppInfo(viewModel = viewModel,navController = navController)
         }
 
 

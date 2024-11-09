@@ -143,7 +143,8 @@ fun HomeView(
                 // Display Wishes Conditionally
                 if (viewModel.searchQuery.isNotEmpty() && filteredWishes.value.isNotEmpty()) {
                     // Show filtered search results in LazyRow
-                    LazyRow(
+                    //LazyRow(
+                    LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         items(filteredWishes.value, key = { it.id }) { wish ->
@@ -177,6 +178,7 @@ fun HomeView(
                                         navController.navigate(Screen.AddScreen.route + "/${wish.id}")
                                     },
                                     viewModel = viewModel
+                                    
                                 )
                             }
                         }
@@ -187,7 +189,7 @@ fun HomeView(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "No wishes to display", color = Color.Gray)
+                        Text(text = "No notes to display", color = Color.Gray)
                     }
                 }
             }
@@ -206,7 +208,7 @@ fun SearchBar(
         onValueChange = { onQueryChange(it) },
         modifier = Modifier
             .fillMaxWidth(),
-        placeholder = { Text(text = "Search Wishes") },
+        placeholder = { Text(text = "Search Notes", color = Color.Gray) },
         singleLine = true,
         trailingIcon = {
             IconButton(
@@ -214,7 +216,8 @@ fun SearchBar(
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Search Icon"
+                    contentDescription = "Search Icon",
+                    tint = Color.Gray
                 )
             } },
         colors = TextFieldDefaults.textFieldColors(
@@ -280,10 +283,13 @@ fun SwipeToDeleteItem(
 ){
     val dismissState = rememberDismissState(
         confirmStateChange = {
-            if (it == DismissValue.DismissedToEnd || it == DismissValue.DismissedToEnd){
+            if (it == DismissValue.DismissedToStart){
                 onDismiss()
+                true
             }
-            true
+            else{
+                false
+            }
         }
     )
 
@@ -292,6 +298,8 @@ fun SwipeToDeleteItem(
     SwipeToDismiss(
         state = dismissState,
         directions = setOf(DismissDirection.EndToStart),
+        // Set threshold to determine when to trigger dismissal (1f means fully swiped)
+        dismissThresholds = { FractionalThreshold(1f) },
         //defines the bg Ui that appears during swipe action
         background = {
             val color by animateColorAsState(
@@ -372,8 +380,7 @@ fun SwipeToDeleteItem(
 //                        onDismiss = { viewModel.deleteWish(wish) }) {
 //                        WishItem(
 //                            wish = wish,
-//                            onClick = { /*TODO*/ }, viewModel = viewModel
-//                        )
+//                            onClick = { /*T
 //
 //                    }
 //                }

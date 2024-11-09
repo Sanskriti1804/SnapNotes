@@ -30,10 +30,12 @@ import com.example.wishlistapp.ui.theme.green
 import com.example.wishlistapp.ui.theme.lightBlue
 import com.example.wishlistapp.ui.theme.orange
 import com.example.wishlistapp.ui.theme.yellow
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun UserView(viewModel: WishViewModel, navController: NavController){
 //fun UserView( navController: NavController){
+    isUserAlreadySignIn(navController)
     Box(modifier = Modifier.fillMaxSize()){
         Image(
             painter = painterResource(id = R.drawable.main_page),
@@ -79,6 +81,13 @@ fun UserView(viewModel: WishViewModel, navController: NavController){
     }
 
 }
+
+fun isUserAlreadySignIn(navController: NavController) {
+    if(FirebaseAuth.getInstance().currentUser != null){
+        navController.navigate(Screen.HomeScreen.route)
+    }
+}
+
 
 /*
 @Preview(showBackground = true)

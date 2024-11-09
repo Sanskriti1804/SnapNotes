@@ -55,10 +55,10 @@ import coil.compose.rememberImagePainter
 @Composable
 fun SettingsView(
     wishViewModel: WishViewModel,   // WishViewModel for wishlist-related logic
-    //authViewModel: AuthViewModel,   // AuthViewModel for user authentication
     navController: NavController,
+    //authViewModel: AuthViewModel,   // AuthViewModel for user authentication
     //selectedImageUri : String?,
-    username : String
+//    username : String
 ) {
     //username : String?
     //val emailState by authViewModel.emailState.collectAsState() // MAKE SURE `emailState` IS AVAILABLE IN `AuthViewModel`, IF NOT, ADD IT
@@ -138,7 +138,7 @@ fun SettingsView(
                     .clip(CircleShape)
             )
             Text(
-                text = username,
+                text = "username",
                 fontWeight = FontWeight.Bold,
                 fontSize = 26.sp,
                 modifier = Modifier.padding(top = 12.dp, bottom = 3.dp)
@@ -176,7 +176,7 @@ fun SettingsView(
             }
 
             Text(
-                text = "Quick Access",
+                text = "Preference",
                 fontSize = 20.sp,
                 modifier = Modifier.align(Alignment.Start),
                 //textAlign = TextAlign.Left,
@@ -197,14 +197,20 @@ fun SettingsView(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_tag_search),
-                            contentDescription = "search icon",
+                            painter = painterResource(id = R.drawable.ic_lock),
+                            contentDescription = "lock icon",
                             modifier = Modifier.padding(8.dp)
                         )
                         Text(
-                            text = "Tag Search",
+                            text = "App Lock",
                             fontSize = 18.sp,
                             modifier = Modifier.padding(12.dp)
+                                .clickable {
+                                    promptManager?.showBiometricPrompt(
+                                        title = "Notes Prompt",
+                                        description = "Locking notes app for privacy"
+                                    )
+                                }
                         )
                     }
                     Divider(thickness = 2.dp)
@@ -230,7 +236,7 @@ fun SettingsView(
             }
 
             Text(
-                text = "Preferences", fontSize = 20.sp,
+                text = "About us & Support", fontSize = 20.sp,
                 modifier = Modifier
                     .padding(top = 18.dp)
                     .align(Alignment.Start),
@@ -252,62 +258,69 @@ fun SettingsView(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_views),
-                            contentDescription = "Views icon",
+                            painter = painterResource(id = R.drawable.ic_info),
+                            contentDescription = "Info icon",
                             modifier = Modifier.padding(8.dp)
                         )
-                        Text(text = "View", fontSize = 18.sp, modifier = Modifier.padding(12.dp))
+                        Text(
+                            text = "App Info",
+                            fontSize = 18.sp,
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .clickable { navController.navigate(Screen.InfoPrevScreen.route) }
+                        )
                     }
                     Divider(thickness = 2.dp)
                     Row(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_lock),
-                            contentDescription = "Lock icon",
+                            painter = painterResource(id = R.drawable.ic_contact),
+                            contentDescription = "Contact us icon",
                             modifier = Modifier.padding(8.dp)
                         )
                         Text(
-                            text = "Lock",
+                            text = "Contact us",
                             fontSize = 18.sp,
                             modifier = Modifier
                                 .padding(12.dp)
                                 .clickable {
-                                    promptManager?.showBiometricPrompt(
-                                        title = "Notes Prompt",
-                                        description = "Locking notes app for privacy"
-                                    )
-
+                                    //creating an intent to open email app with few prefilled deatils
+                                    val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                                        //ensures only email apps respond
+                                        data = Uri.parse("mailto:")
+                                        putExtra(Intent.EXTRA_EMAIL, arrayOf("support@snapnotes.com"))
+                                    }
+                                    //start the email intent
+                                    context.startActivity(emailIntent)
                                 }
-                            /*biometricResult?.let { result ->
-                                    when (result) {
-                                            is BiometricResult.AuthenticationError -> {
-                                                result.Error
-                                            }
-
-                                            BiometricResult.AuthenticationFailed -> {
-                                                "Authentication Failed"
-                                            }
-
-                                            BiometricResult.AuthenticationNotSet -> {
-                                                "Authentication not set"
-                                            }
-
-                                            BiometricResult.AuthenticationSuccess -> {
-                                                "Authentication Success"
-                                            }
-
-                                            BiometricResult.FeatureUnavailable -> {
-                                                "Feature Unavailable"
-                                            }
-
-                                            BiometricResult.HardwareUnavailable -> {
-                                                "Hardware Unavailable "
-                                            }
-
-                                        }
-                                }*/
-
+                        )
+                    }
+                    Divider(thickness = 2.dp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_feedback),
+                            contentDescription = "feedback icon",
+                            modifier = Modifier.padding(8.dp)
+                        )
+                        Text(
+                            text = "Feedback and Suggestion",
+                            fontSize = 18.sp,
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .clickable {
+                                    //creating an intent to open email app with few prefilled deatils
+                                    val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                                        //ensures only email apps respond
+                                        data = Uri.parse("mailto:")
+                                        putExtra(Intent.EXTRA_EMAIL, arrayOf("support@snapnotes.com"))
+                                        putExtra(Intent.EXTRA_SUBJECT, "Suggestion and Feedbacks")
+                                    }
+                                    //start the email intent
+                                    context.startActivity(emailIntent)
+                                }
                         )
                     }
                     Divider(thickness = 2.dp)
@@ -354,7 +367,6 @@ fun SettingsView(
     }
 }
 
-
 @Composable
 fun ProfileView(onDismiss: () -> Unit, navController: NavController, viewModel: WishViewModel) {
     // State to manage the selected image URI
@@ -363,7 +375,7 @@ fun ProfileView(onDismiss: () -> Unit, navController: NavController, viewModel: 
 
     // Context for permission requests and handling intents
     val context = LocalContext.current
-
+    
     // Gallery launcher to pick an image
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()

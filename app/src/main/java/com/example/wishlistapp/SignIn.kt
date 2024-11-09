@@ -84,7 +84,7 @@ open class LoginAuthViewModel : ViewModel(){
 @Composable
 fun SigninView(viewModel: LoginAuthViewModel, navController: NavController) {
 
-    isUserAlreadySignIn(navController)
+//    isUserAlreadySignIn(navController)
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -95,11 +95,11 @@ fun SigninView(viewModel: LoginAuthViewModel, navController: NavController) {
     }
 }
 
-fun isUserAlreadySignIn(navController: NavController) {
-    if(FirebaseAuth.getInstance().currentUser != null){
-        navController.navigate(Screen.HomeScreen.route)
-    }
-}
+//fun isUserAlreadySignIn(navController: NavController) {
+//    if(FirebaseAuth.getInstance().currentUser != null){
+//        navController.navigate(Screen.HomeScreen.route)
+//    }
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
