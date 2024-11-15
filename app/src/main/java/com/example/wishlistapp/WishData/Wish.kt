@@ -17,20 +17,3 @@ data class Wish(
     @ColumnInfo(name = "is-fav", defaultValue = "fav")
     val isFav : String =""
 )
-
-/*object Dummywish{
-    val wishList = listOf(
-        Wish(title = "Google watch 2",
-            description = "An Android Watch",
-            tag = "tag1"),
-        Wish(title = "Oculus Quest 2",
-            description = "A VR headset for playing games",
-            tag = "tag2"),
-        Wish(title = "A Sci-fi Book",
-            description = "A Best seller Sci-fi action Book",
-            tag = "tag3"),
-        Wish(title = "Bean Bag",
-            description = "A comfy bag to substitute for chair",
-            tag = "tag4"),
-        )
-}*/

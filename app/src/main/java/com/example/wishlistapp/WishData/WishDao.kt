@@ -33,7 +33,4 @@ abstract class WishDao {
     @Query("Select * from `wish-table` where id = :id")
     abstract fun getAWishById(id: Long): Flow<Wish>
 
-//    @Query("Select * from `wish-table` where `is-fav`= 1")
-//    abstract fun getFavWish() : Flow<List<Wish>>
-
 }

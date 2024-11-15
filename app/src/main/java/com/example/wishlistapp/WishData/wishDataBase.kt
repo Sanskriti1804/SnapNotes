@@ -45,7 +45,6 @@ abstract class wishDataBase : RoomDatabase() {
 
         //providing context to the method to access the db instance/ db
         fun getDatabase(context: Context): wishDataBase {
-//            Log.d(TAG, "Getting the database instance")
             //way to check and create db instance safely(to prevent mul. creations)
             return INSTANCE ?: synchronized(this) {
                 //initializes room db
@@ -54,31 +53,12 @@ abstract class wishDataBase : RoomDatabase() {
                     wishDataBase::class.java,       //class type of the room db
                     "wish_database"             //name given to the db
                 )
-//                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3) // Register both migrations
-//                    .fallbackToDestructiveMigration()  // Add this line to reset DB if migration fails
                     .build()
                 //assigning the newlu created db to the var
                 INSTANCE = instance
-//                Log.d(TAG, "Database instance created")
                 instance//instance of db - that gets returned to the user
             }
         }
-
-        // Define migration from version 1 to 2
-//        val MIGRATION_1_2: Migration = object : Migration(1, 2) {
-//            override fun migrate(db: SupportSQLiteDatabase) {
-//                Log.d("Migration", "Migrating from version 2 to 3")
-//                // Example migration: Adding a new column 'tag' to 'Wish' table
-//                db.execSQL("ALTER TABLE `wish-table` ADD COLUMN `wish-tag` TEXT NOT NULL DEFAULT ''")
-//            }
-//        }
-//        val MIGRATION_2_3: Migration = object : Migration(2, 3) {
-//            override fun migrate(db: SupportSQLiteDatabase) {
-//                Log.d("Migration", "Migrating from version 2 to 3")
-//                db.execSQL("ALTER TABLE `wish-table` ADD COLUMN `is-fav` INTEGER NOT NULL DEFAULT 0")
-//            }
-//        }
-
     }
 }
 

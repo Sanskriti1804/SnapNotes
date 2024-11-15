@@ -59,7 +59,6 @@ class AuthViewModel : ViewModel() {
     private val _emailState = MutableStateFlow<String?>(null)
     val emailState: StateFlow<String?> = _emailState.asStateFlow()
 
-
     private val _authError = MutableStateFlow<String?>(null)
     val authError: StateFlow<String?> = _authError.asStateFlow()
 
@@ -79,7 +78,6 @@ class AuthViewModel : ViewModel() {
                 _authError.value = "Enter your name"
                 false
             }
-
             else -> true
         }
     }
@@ -100,12 +98,10 @@ class AuthViewModel : ViewModel() {
             }
         }
         }
-
     fun saveUserEmail(email: String){
         _emailState.value = email
         Log.d("AuthViewModel", "Email updated to: $email")
     }
-
 }
 
 @Composable
@@ -117,7 +113,6 @@ fun SignupView(viewModel: AuthViewModel, navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-
         SignupCard(
             navController = navController,
             viewModel = viewModel
@@ -197,11 +192,8 @@ fun SignupCard( navController: NavController, viewModel: AuthViewModel) {
                         emailState.value,
                         passwordState.value
                     )
-                    //val encodedEmail = URLEncoder.encode(emailState.value, StandardCharsets.UTF_8.toString())
-                    //navController.navigate(Screen.HomeScreen.route +"/${encodedEmail}")
                     //save email in vievmodel
                     viewModel.saveUserEmail(emailState.value)
-
                     navController.navigate(Screen.HomeScreen.route)
                 },
                 shape = RoundedCornerShape(8.dp),
@@ -215,9 +207,7 @@ fun SignupCard( navController: NavController, viewModel: AuthViewModel) {
                     modifier = Modifier.padding(4.dp)
                 )
             }
-
         }
-
     }
 }
 

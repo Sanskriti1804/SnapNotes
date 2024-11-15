@@ -132,12 +132,6 @@ fun AddEditDetailView(
                     viewModel.onWishDescriptionState(it)
                 })
             Spacer(modifier = Modifier.height(10.dp))
-//            WishTextField(
-//                label = "Tag" ,
-//                value = viewModel.wishTagState.joinToString(","),
-//                onValueChanged = {
-//                    viewModel.onWishTagState(it)
-//                })
             TagInput(
                 tags = viewModel.wishTagState,
                 onAddTag = { tag ->
@@ -195,7 +189,6 @@ fun AddEditDetailView(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.fillMaxWidth()
-                    //.padding(start = 12.dp, end = 12.dp)
             )
             {
                 Text(
@@ -204,10 +197,8 @@ fun AddEditDetailView(
                     style = TextStyle(fontSize = 18.sp),
                     color = Color.White
                 )
-
             }
         }
-
     }
 }
 
@@ -241,7 +232,6 @@ fun WishTextField(
 @Preview(showBackground = true)
 @Composable
 fun WistPrev() {
-    // WishTextField(label = "text", value = "value", onValueChanged = {})
     // Create a dummy ViewModel with some initial state
     val dummyViewModel = WishViewModel().apply {
         wishTitleState = "Sample Title"
@@ -272,7 +262,6 @@ fun TagInput(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
-//            horizontalArrangement = Arrangement.Start
         ){
             items(tags) {
                 tag ->
@@ -333,7 +322,6 @@ fun TagItem( tag : String, onRemoveTag: () -> Unit){
             .padding(3.dp)
             .border(1.dp, Color.Black, RoundedCornerShape(4.dp))
             .padding(horizontal = 8.dp, vertical = 5.dp),
-//        verticalAlignment = Alignment.CenterVertically
     ){
         Row (
             verticalAlignment = Alignment.CenterVertically,
@@ -343,25 +331,14 @@ fun TagItem( tag : String, onRemoveTag: () -> Unit){
                 text = "#$tag",
                 fontSize = 12.sp,
                 modifier = Modifier
-//                    .weight(1f)
                     .padding(end = 4.dp)
                     .align(Alignment.CenterVertically)
             )
-//            Button(onClick = {
-//
-//            },
-//                modifier = Modifier
-//                    ,
-//                colors = ButtonDefaults.buttonColors(
-//                    containerColor = Color.Transparent,
-//                    contentColor = Color.Black
-//                )) {
                 Icon(
                     imageVector = Icons.Outlined.Close,
                     contentDescription = "Remove tag",
                     tint = Color.Black,
                     modifier = Modifier
-                        //.size(30.dp)
                         .height(16.dp)
                         .width(16.dp)
                         .align(Alignment.CenterVertically)

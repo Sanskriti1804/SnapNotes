@@ -35,29 +35,11 @@ fun Navigation(viewModel: WishViewModel = viewModel(),
             ProfileView(viewModel = viewModel,navController = navController, onDismiss = {})
         }
 
-        //composable(Screen.SettingsScreen.route + "/{emailState}"){backStackEntry ->
         composable(Screen.SettingsScreen.route
-//                + "/{userNameState}" ,
-//            arguments = listOf(
-//                navArgument("userNameState"
-//                ){
-//                    type = NavType.StringType
-//                }
-//            )
         ){
-//            backStackEntry ->
-            //val imageUri = backStackEntry.arguments?.getString("imageUri")
-            //val email = backStackEntry.arguments?.getString("emailState")
-//            val username = backStackEntry.arguments?.getString("userNameState") ?: ""
-//            //val decodedEmail = URLDecoder.decode(email, "UTF-8")
-            //SettingsView(viewModel = viewModel,navController = navController, emailState = decodedEmail ?: "")
             val wishViewModel: WishViewModel = viewModel() // Obtain WishViewModel
             val authViewModel: AuthViewModel = viewModel()
             SettingsView( wishViewModel = wishViewModel,navController = navController)
-//                username = username,
-                //authViewModel = authViewModel,
-
-            //SettingsView( wishViewModel = wishViewModel,authViewModel = authViewModel, navController = navController, username = username ?: "Default")
         }
         // initialiation in composable fnn(used in NavHost to define individual screen) - it takes a route and a lambda fnn
         composable(Screen.HomeScreen.route){
@@ -76,9 +58,6 @@ fun Navigation(viewModel: WishViewModel = viewModel(),
         ){
             //entry - current instance of NavBackStackEntry(an entry in the nav back stack managed by navigation)
             entry->
-            //entry.args -> args associated with current naviagtion dest
-            // retrives the long value associated with key id if entry.arg is not null
-            //if entry.args is null or getlong returns null -> default its id to 0L
             val id = if(entry.arguments != null) entry.arguments!!.getLong("id") else 0L
             //passing that id to addeditdeatilView
             AddEditDetailView(id = id, viewModel = viewModel, navController = navController)
@@ -89,8 +68,5 @@ fun Navigation(viewModel: WishViewModel = viewModel(),
         composable(Screen.InfoScreen.route){
             AppInfo(viewModel = viewModel,navController = navController)
         }
-
-
     }
-
 }

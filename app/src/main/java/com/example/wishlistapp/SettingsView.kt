@@ -57,11 +57,7 @@ import coil.compose.rememberImagePainter
 fun SettingsView(
     wishViewModel: WishViewModel,   // WishViewModel for wishlist-related logic
     navController: NavController,
-    //authViewModel: AuthViewModel,   // AuthViewModel for user authentication
-    //selectedImageUri : String?,
-//    username : String
 ) {
-
     val username by wishViewModel.username.collectAsState()
     val photoUri by wishViewModel.photoUri.collectAsState()
 
@@ -72,11 +68,9 @@ fun SettingsView(
     val activity = context as? AppCompatActivity
 
     val promptManager =
-        //BiometricPromptManager(activity = AppCompatActivity())
         activity?.let {
             BiometricPromptManager(it)
         }
-
 
     val biometricResult = promptManager?.promptResults?.collectAsState(initial = null)
 
@@ -123,8 +117,6 @@ fun SettingsView(
                         .clip(CircleShape)
                 )
             } ?: run {
-                //if (username != null) {
-                //Text(text = username, fontWeight = FontWeight.Bold, fontSize = 20.sp)
                 Image(
                     painter = painterResource(id = R.drawable.icon2),
                     contentDescription = "profile icon", // UPDATE THE DESCRIPTION TO SOMETHING RELEVANT
@@ -157,7 +149,6 @@ fun SettingsView(
                 text = "Preference",
                 fontSize = 20.sp,
                 modifier = Modifier.align(Alignment.Start),
-                //textAlign = TextAlign.Left,
                 color = Color.DarkGray
             )
 
@@ -206,7 +197,6 @@ fun SettingsView(
                             modifier = Modifier
                                 .padding(12.dp)
                                 .clickable {
-//                                    navController.navigate(Screen.ScreenFav.route)
                                 }
                         )
                     }
@@ -218,7 +208,6 @@ fun SettingsView(
                 modifier = Modifier
                     .padding(top = 18.dp)
                     .align(Alignment.Start),
-                //textAlign = TextAlign.Left,
                 color = Color.DarkGray
             )
 
@@ -368,16 +357,6 @@ fun ProfileView(onDismiss: () -> Unit, navController: NavController, viewModel: 
             }
         }
     }
-
-    /*
-    gallery launcher -
-    rememberlauncher - to remember the result and use it to start another activity
-    contract - telling the app that the result will be used for something else
-    handling activity result if it is successful
-    uri = result.data?.data - returns the sata returned from the gallery (uri of the selected image)
-    result.data - returned intent obj
-    result.data?.data - access the specific data within the intent(uri)
-     */
 
     // Function to open the gallery
     fun openGallery(context: Context, galleryLauncher: ActivityResultLauncher<Intent>) {

@@ -13,5 +13,4 @@ sealed class Screen(val route : String){
     object SettingsScreen : Screen("settings_screen")
     object InfoPrevScreen : Screen("aboutinfo_screen")
     object InfoScreen : Screen("info_screen")
-//    object ScreenFav : Screen("favorite_screen")
 }
