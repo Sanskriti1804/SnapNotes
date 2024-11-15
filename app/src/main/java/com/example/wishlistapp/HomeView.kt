@@ -87,7 +87,7 @@ fun HomeView(
         scaffoldState = scaffoldState,
         topBar = {
             AppBarView(
-                title = "Hello!",
+                title = "SnapNotes",
                 navController = navController
             )
         },

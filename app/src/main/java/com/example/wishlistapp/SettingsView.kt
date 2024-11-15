@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,13 +61,9 @@ fun SettingsView(
     //selectedImageUri : String?,
 //    username : String
 ) {
-    //username : String?
-    //val emailState by authViewModel.emailState.collectAsState() // MAKE SURE `emailState` IS AVAILABLE IN `AuthViewModel`, IF NOT, ADD IT
-    //Log.d("SettingsView", "Collected emailState: $emailState")
 
-    //val userName = username ?: "username"
-
-    // To manage the visibility of the profile settings
+    val username by wishViewModel.username.collectAsState()
+    val photoUri by wishViewModel.photoUri.collectAsState()
 
     val showProfileDialog = remember { mutableStateOf(false) }
     val showLogoutDialog = remember { mutableStateOf(false) }
@@ -115,52 +112,33 @@ fun SettingsView(
                 .padding(25.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            /*val uri = selectedImageUri?.let {
-                Uri.parse(it)
-            }
-            uri?.let {
+
+            photoUri?.let {
                 Image(
                     painter = rememberImagePainter(data = it),
+                    contentDescription = "profile icon", // UPDATE THE DESCRIPTION TO SOMETHING RELEVANT
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(CircleShape)
+                )
+            } ?: run {
+                //if (username != null) {
+                //Text(text = username, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                Image(
+                    painter = painterResource(id = R.drawable.icon2),
                     contentDescription = "profile icon", // UPDATE THE DESCRIPTION TO SOMETHING RELEVANT
                     modifier = Modifier
                         .size(100.dp)
                         .clip(CircleShape)
                 )
-            }*/
-            //if (username != null) {
-            //Text(text = username, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-
-            Image(
-                painter = painterResource(id = R.drawable.icon2),
-                contentDescription = "profile icon", // UPDATE THE DESCRIPTION TO SOMETHING RELEVANT
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(CircleShape)
-            )
+            }
             Text(
-                text = "username",
+                text = username.ifEmpty { "Username" },
                 fontWeight = FontWeight.Bold,
                 fontSize = 26.sp,
                 modifier = Modifier.padding(top = 12.dp, bottom = 3.dp)
             )
-            //}
-
-            //Log.d("SettingsView", "Display emailState: $emailState")
-
-            /* Display the email from the authViewModel
-            if (emailState?.isNotBlank() == true) {
-                Text(
-                    text = "$emailState",  // ENSURE THAT `emailState` IS COLLECTED CORRECTLY FROM `AuthViewModel`
-                    color = Color.DarkGray,
-                    fontSize = 16.sp
-                )
-            } else {*/
-            Text(
-                text = "Email not available",  // UPDATE THIS MESSAGE IF IT DOESN'T FIT YOUR APP CONTEXT
-                color = Color.DarkGray,
-                fontSize = 17.sp
-            )
-
 
             Button(
                 onClick =
@@ -249,7 +227,7 @@ fun SettingsView(
                     .fillMaxWidth()
                     .padding(top = 16.dp, bottom = 2.dp),
                 backgroundColor = Color.LightGray,
-                border = BorderStroke(2.dp, Color.DarkGray),
+                border = BorderStroke(2.dp, Color.LightGray),
                 elevation = 16.dp,
                 shape = RoundedCornerShape(8.dp)
             ) {
@@ -384,6 +362,10 @@ fun ProfileView(onDismiss: () -> Unit, navController: NavController, viewModel: 
             // Get the image Uri from the result data
             val uri = result.data?.data
             selectedImageUri = uri
+            uri?.let {
+                // Update the photo URI in the ViewModel
+                viewModel.updatePhotoUri(it)
+            }
         }
     }
 
@@ -439,7 +421,7 @@ fun ProfileView(onDismiss: () -> Unit, navController: NavController, viewModel: 
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "Hello, Name!")
+                    Text(text = "Hello!!")
 
                     // Display the selected image or a placeholder image
                     if (selectedImageUri != null) {
@@ -485,7 +467,8 @@ fun ProfileView(onDismiss: () -> Unit, navController: NavController, viewModel: 
                     // Confirmation button
                     Button(
                         onClick = {
-                            navController.navigate(Screen.SettingsScreen.route +"/$userNameState")
+                            viewModel.updateUsername(userNameState)
+                            onDismiss() // Close the ProfileView dialog
                         }, colors = ButtonDefaults.buttonColors(Color.Black),
                         modifier = Modifier.padding(16.dp)
                     ) {

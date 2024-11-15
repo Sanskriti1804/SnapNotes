@@ -1,5 +1,6 @@
  package com.example.wishlistapp
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import androidx.compose.runtime.State
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -24,6 +26,13 @@ class WishViewModel(
     //inheritance - vM()
     private val wishRepository: WishRepository = Graph.wishRepository) : ViewModel()
 {
+    // State for username and photo URI
+    private val _username = MutableStateFlow("")
+    val username: StateFlow<String> get() = _username
+
+    private val _photoUri = MutableStateFlow<Uri?>(null)
+    val photoUri: StateFlow<Uri?> get() = _photoUri
+
     //by - to delegate the getter and setter of a prop to another object
     var wishTitleState by mutableStateOf("")
     var wishDescriptionState by mutableStateOf("")
@@ -35,6 +44,14 @@ class WishViewModel(
 
     private val _wishes = MutableStateFlow<List<Wish>>(emptyList())
     val wishes: StateFlow<List<Wish>> = _wishes.asStateFlow()
+
+    fun updateUsername(newUsername: String) {
+        _username.value = newUsername
+    }
+
+    fun updatePhotoUri(newPhotoUri: Uri) {
+        _photoUri.value = newPhotoUri
+    }
 
     //newString - new or update string value
     fun onWishTitleChanged(newString: String){
